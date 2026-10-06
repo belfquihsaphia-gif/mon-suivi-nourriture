@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#a96580">
+  <title>Mon suivi alimentation & bien-être</title>
+
+  <style>
+    :root {
+      --rose: #a96580;
+      --rose-dark: #764257;
+      --rose-soft: #f8e9ef;
+      --cream: #fffaf6;
+      --green: #62836a;
+      --green-soft: #edf5ee;
+      --text: #3f3035;
+      --muted: #816f75;
+      --border: #eadce1;
+      --white: #fff;
+      --danger: #b84b4b;
+      --shadow: 0 12px 30px rgba(83, 53, 65, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, #fbe2eb, transparent 28rem),
+        radial-gradient(circle at top right, #e8f1df, transparent 26rem),
+        var(--cream);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    button, input, select, textarea { font: inherit; }
+
+    .container {
+      width: min(920px, calc(100% - 24px));
+      margin: auto;
+      padding: 22px 0 70px;
+    }
+
+    header {
+      padding: 25px;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: rgba(255,255,255,.87);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.9rem, 6vw, 3.2rem);
+      line-height: 1.1;
+    }
+
+    header p {
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .local {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 7px 11px;
+      color: var(--green);
+      background: var(--green-soft);
+      border-radius: 99px;
+      font-size: .85rem;
+      font-weight: 700;
+    }
+
+    nav {
+      position: sticky;
+      top: 6px;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin: 17px 0;
+      padding: 7px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(255,255,255,.93);
+      box-shadow: var(--shadow);
+    }
+
+    nav button {
+      padding: 11px 5px;
+      color: var(--muted);
+      background: transparent;
+      border: 0;
+      border-radius: 12px;
+      font-weight: 750;
+      cursor: pointer;
+    }
+
+    nav button.active {
+      color: white;
+      background: var(--rose-dark);
+    }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .card {
+      margin-bottom: 15px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,.92);
+      box-shadow: var(--shadow);
+    }
+
+    h2 { margin-top: 0; }
+
+    .intro {
+      margin-top: -8px;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    label.field {
+      display: block;
+      font-weight: 700;
+    }
+
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      margin-top: 7px;
+      padding: 12px;
+      color: var(--text);
+      background: white;
+      border: 1px solid #d9cbd0;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 3px rgba(169,101,128,.14);
+    }
+
+    .range {
+      padding: 12px 0;
+      border-bottom: 1px solid #f1e6ea;
+    }
+
+    .range:last-child { border-bottom: 0; }
+
+    .range-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 750;
+    }
+
+    output {
+      min-width: 42px;
+      padding: 2px 9px;
+      color: var(--rose-dark);
+      background: var(--rose-soft);
+      border-radius: 99px;
+      text-align: center;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--rose);
+    }
+
+    .scale {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: .75rem;
+    }
+
+    .checks {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 9px;
+    }
+
+    .check {
+      display: flex;
+      gap: 9px;
+      padding: 11px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: #fffdfd;
+      font-weight: 650;
+    }
+
+    .check input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 17px;
+    }
+
+    .btn {
+      padding: 11px 16px;
+      border: 0;
+      border-radius: 99px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .primary {
+      color: white;
+      background: var(--rose-dark);
+    }
+
+    .secondary {
+      color: var(--text);
+      background: var(--rose-soft);
+      border: 1px solid var(--border);
+    }
+
+    .danger {
+      color: var(--danger);
+      background: #fff0f0;
+      border: 1px solid #f1caca;
+    }
+
+    #status {
+      display: none;
+      margin-top: 13px;
+      padding: 11px;
+      color: var(--green);
+      background: var(--green-soft);
+      border-radius: 12px;
+      font-weight: 750;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .stat {
+      padding: 15px 8px;
+      border: 1px solid var(--border);
+      border-radius: 17px;
+      background: white;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.6rem;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: .75rem;
+    }
+
+    .bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      height: 230px;
+      padding: 20px 5px 0;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .day-bar {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 100%;
+      min-width: 32px;
+    }
+
+    .bar-parts {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 180px;
+    }
+
+    .bar {
+      width: 9px;
+      min-height: 2px;
+      border-radius: 8px 8px 2px 2px;
+    }
+
+    .bar.digest { background: #b96f8c; }
+    .bar.energy { background: #719076; }
+    .bar.stress { background: #d39c54; }
+
+    .day-label {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: .7rem;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: .85rem;
+    }
+
+    .dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 5px;
+      border-radius: 50%;
+    }
+
+    .entry {
+      margin-bottom: 10px;
+      padding: 15px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: white;
+    }
+
+    .entry-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .entry p {
+      margin: 8px 0;
+      color: var(--muted);
+    }
+
+    .pill {
+      height: fit-content;
+      padding: 5px 9px;
+      color: var(--rose-dark);
+      background: var(--rose-soft);
+      border-radius: 99px;
+      font-size: .8rem;
+      font-weight: 800;
+    }
+
+    .empty {
+      padding: 25px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .warning {
+      padding: 15px;
+      border: 1px solid #efc5b8;
+      border-radius: 15px;
+      background: #fff0e9;
+    }
+
+    .hidden { display: none !important; }
+
+    footer {
+      margin-top: 25px;
+      color: var(--muted);
+      font-size: .8rem;
+      text-align: center;
+    }
+
+    @media (max-width: 650px) {
+      .grid, .checks { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .card, header { padding: 17px; }
+      nav button { font-size: .8rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header>
+      <h1>Mon suivi bien-être 🌿</h1>
+      <p>
+        Un journal personnel pour observer mon alimentation, ma digestion,
+        mon énergie et mes habitudes sans chercher la perfection.
+      </p>
+      <span class="local">🔒 Données stockées sur cet appareil</span>
+    </header>
+
+    <nav>
+      <button class="tab active" data-page="journal">Aujourd’hui</button>
+      <button class="tab" data-page="progress">Progression</button>
+      <button class="tab" data-page="history">Historique</button>
+    </nav>
+
+    <section id="journal" class="page active">
+      <form id="form">
+        <div class="card">
+          <h2>Ma journée</h2>
+
+          <div class="grid">
+            <label class="field">
+              Date
+              <input id="date" type="date" required>
+            </label>
+
+            <label class="field">
+              Sommeil
+              <input id="sleep" type="number" min="0" max="16"
+                     step="0.25" placeholder="Nombre d’heures">
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Mes ressentis</h2>
+          <p class="intro">0 = absent ou très faible · 10 = très intense</p>
+
+          <div class="range">
+            <div class="range-head">
+              <label for="digestion">Inconfort digestif</label>
+              <output for="digestion">0</output>
+            </div>
+            <input id="digestion" type="range" min="0" max="10" value="0">
+            <div class="scale"><span>Aucun</span><span>Très important</span></div>
+          </div>
+
+          <div class="range">
+            <div class="range-head">
+              <label for="bloating">Ballonnements</label>
+              <output for="bloating">0</output>
+            </div>
+            <input id="bloating" type="range" min="0" max="10" value="0">
+            <div class="scale"><span>Aucun</span><span>Très importants</span></div>
+          </div>
+
+          <div class="range">
+            <div class="range-head">
+              <label for="energy">Énergie</label>
+              <output for="energy">5</output>
+            </div>
+            <input id="energy" type="range" min="0" max="10" value="5">
+            <div class="scale"><span>Épuisée</span><span>En pleine forme</span></div>
+          </div>
+
+          <div class="range">
+            <div class="range-head">
+              <label for="cravings">Envies de sucre / grignotage</label>
+              <output for="cravings">0</output>
+            </div>
+            <input id="cravings" type="range" min="0" max="10" value="0">
+            <div class="scale"><span>Aucune</span><span>Très fortes</span></div>
+          </div>
+
+          <div class="range">
+            <div class="range-head">
+              <label for="stress">Stress</label>
+              <output for="stress">0</output>
+            </div>
+            <input id="stress" type="range" min="0" max="10" value="0">
+            <div class="scale"><span>Très calme</span><span>Très stressée</span></div>
+          </div>
+
+          <div class="range">
+            <div class="range-head">
+              <label for="hunger">Faim globale</label>
+              <output for="hunger">5</output>
+            </div>
+            <input id="hunger" type="range" min="0" max="10" value="5">
+            <div class="scale"><span>Très faible</span><span>Très forte</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Mes habitudes</h2>
+
+          <div class="checks">
+            <label class="check">
+              <input id="breakfast" type="checkbox">
+              Petit-déjeuner satisfaisant
+            </label>
+
+            <label class="check">
+              <input id="regularMeals" type="checkbox">
+              Repas assez réguliers
+            </label>
+
+            <label class="check">
+              <input id="protein" type="checkbox">
+              Sources de protéines
+            </label>
+
+            <label class="check">
+              <input id="vegetables" type="checkbox">
+              Fruits ou légumes variés
+            </label>
+
+            <label class="check">
+              <input id="water" type="checkbox">
+              Hydratation satisfaisante
+            </label>
+
+            <label class="check">
+              <input id="movement" type="checkbox">
+              Marche ou mouvement agréable
+            </label>
+
+            <label class="check">
+              <input id="slowMeal" type="checkbox">
+              Au moins un repas pris calmement
+            </label>
+
+            <label class="check">
+              <input id="selfCare" type="checkbox">
+              Moment de repos ou détente
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Repas et contexte</h2>
+
+          <div class="grid">
+            <label class="field">
+              Ce que j’ai mangé
+              <textarea id="meals"
+                placeholder="Ex. matin : tartines et yaourt ; midi : riz, poulet et légumes…"></textarea>
+            </label>
+
+            <label class="field">
+              Observations
+              <textarea id="notes"
+                placeholder="Ex. inconfort après le dîner, règles, journée stressante, restaurant…"></textarea>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button class="btn primary" type="submit">Enregistrer</button>
+            <button id="reset" class="btn secondary" type="button">
+              Réinitialiser
+            </button>
+          </div>
+
+          <div id="status">✓ Journée enregistrée sur ton appareil.</div>
+        </div>
+      </form>
+    </section>
+
+    <section id="progress" class="page">
+      <div class="stats">
+        <div class="stat">
+          <strong id="total">0</strong>
+          <span>jours enregistrés</span>
+        </div>
+        <div class="stat">
+          <strong id="avgDigest">—</strong>
+          <span>digestion moyenne</span>
+        </div>
+        <div class="stat">
+          <strong id="avgEnergy">—</strong>
+          <span>énergie moyenne</span>
+        </div>
+        <div class="stat">
+          <strong id="avgStress">—</strong>
+          <span>stress moyen</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Mes 7 dernières entrées</h2>
+        <p class="intro">
+          Les valeurs sont des ressentis personnels, pas des mesures médicales.
+        </p>
+
+        <div id="chartEmpty" class="empty">
+          Enregistre une première journée pour afficher le graphique.
+        </div>
+
+        <div id="chartBox" class="hidden">
+          <div id="bars" class="bars"></div>
+
+          <div class="legend">
+            <span><i class="dot" style="background:#b96f8c"></i>Digestion</span>
+            <span><i class="dot" style="background:#719076"></i>Énergie</span>
+            <span><i class="dot" style="background:#d39c54"></i>Stress</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Comment lire les résultats ?</h2>
+        <p>
+          Regarde surtout les tendances répétées. Par exemple, plusieurs nuits
+          courtes peuvent coïncider avec davantage de fatigue ou d’envies de
+          sucre. Une seule journée ne permet pas de conclure qu’un aliment est
+          responsable d’un symptôme.
+        </p>
+        <p>
+          Évite de supprimer plusieurs familles d’aliments sans l’avis d’un
+          médecin ou d’un·e diététicien·ne.
+        </p>
+      </div>
+    </section>
+
+    <section id="history" class="page">
+      <div class="card">
+        <h2>Historique</h2>
+        <div id="entries"></div>
+      </div>
+
+      <div class="card">
+        <h2>Mes données</h2>
+        <p class="intro">
+          La sauvegarde JSON permet de restaurer le journal sur cet appareil.
+        </p>
+
+        <div class="actions">
+          <button id="csv" class="btn secondary" type="button">Exporter CSV</button>
+          <button id="json" class="btn secondary" type="button">Sauvegarde JSON</button>
+
+          <label class="btn secondary" style="cursor:pointer">
+            Importer JSON
+            <input id="import" class="hidden" type="file"
+                   accept=".json,application/json">
+          </label>
+
+          <button id="deleteAll" class="btn danger" type="button">
+            Tout supprimer
+          </button>
+        </div>
+      </div>
+
+      <div class="warning">
+        <strong>À savoir :</strong> cet outil ne pose pas de diagnostic.
+        Consulte rapidement un professionnel en cas de douleur forte ou
+        persistante, sang dans les selles, selles noires, vomissements répétés,
+        fièvre, malaise, perte de poids involontaire ou aggravation importante.
+      </div>
+    </section>
+
+    <footer>
+      Journal personnel d’observation — ne remplace pas un suivi médical.
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const KEY = "mon_suivi_alimentation_v1";
+      const $ = id => document.getElementById(id);
+
+      const ranges = [
+        "digestion", "bloating", "energy",
+        "cravings", "stress", "hunger"
+      ];
+
+      const checks = [
+        "breakfast", "regularMeals", "protein", "vegetables",
+        "water", "movement", "slowMeal", "selfCare"
+      ];
+
+      function today() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      }
+
+      function getData() {
+        try {
+          const data = JSON.parse(localStorage.getItem(KEY) || "[]");
+          return Array.isArray(data) ? data : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function saveData(data) {
+        localStorage.setItem(KEY, JSON.stringify(data));
+      }
+
+      function formatDate(value) {
+        return new Intl.DateTimeFormat("fr-FR", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric"
+        }).format(new Date(value + "T12:00:00"));
+      }
+
+      function updateOutputs() {
+        ranges.forEach(id => {
+          document.querySelector(`output[for="${id}"]`).textContent = $(id).value;
+        });
+      }
+
+      ranges.forEach(id => $(id).addEventListener("input", updateOutputs));
+
+      document.querySelectorAll(".tab").forEach(button => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".tab").forEach(tab =>
+            tab.classList.toggle("active", tab === button)
+          );
+
+          document.querySelectorAll(".page").forEach(page =>
+            page.classList.toggle("active", page.id === button.dataset.page)
+          );
+
+          render();
+        });
+      });
+
+      function resetForm(keepDate = true) {
+        const selectedDate = keepDate ? $("date").value : today();
+        $("form").reset();
+        $("date").value = selectedDate || today();
+        $("energy").value = 5;
+        $("hunger").value = 5;
+        updateOutputs();
+      }
+
+      function loadDay(date) {
+        resetForm(true);
+        $("date").value = date;
+
+        const entry = getData().find(item => item.date === date);
+        if (!entry) return;
+
+        ["sleep", "meals", "notes", ...ranges].forEach(id => {
+          if (entry[id] !== undefined) $(id).value = entry[id];
+        });
+
+        checks.forEach(id => $(id).checked = Boolean(entry[id]));
+        updateOutputs();
+      }
+
+      $("form").addEventListener("submit", event => {
+        event.preventDefault();
+
+        const entry = {
+          date: $("date").value,
+          sleep: Number($("sleep").value) || 0,
+          meals: $("meals").value.trim(),
+          notes: $("notes").value.trim(),
+          updatedAt: new Date().toISOString()
+        };
+
+        ranges.forEach(id => entry[id] = Number($(id).value));
+        checks.forEach(id => entry[id] = $(id).checked);
+
+        const data = getData();
+        const existing = data.findIndex(item => item.date === entry.date);
+
+        if (existing >= 0) data[existing] = entry;
+        else data.push(entry);
+
+        data.sort((a, b) => a.date.localeCompare(b.date));
+        saveData(data);
+
+        $("status").style.display = "block";
+        setTimeout(() => $("status").style.display = "none", 2500);
+
+        render();
+      });
+
+      $("date").addEventListener("change", () => loadDay($("date").value));
+
+      $("reset").addEventListener("click", () => {
+        if (confirm("Réinitialiser les champs de cette journée ?")) {
+          resetForm(true);
+        }
+      });
+
+      function average(data, property) {
+        if (!data.length) return "—";
+        const sum = data.reduce((total, item) =>
+          total + Number(item[property] || 0), 0
+        );
+        return (sum / data.length).toFixed(1);
+      }
+
+      function renderStats() {
+        const data = getData();
+        const recent = data.slice(-7);
+
+        $("total").textContent = data.length;
+        $("avgDigest").textContent = average(recent, "digestion");
+        $("avgEnergy").textContent = average(recent, "energy");
+        $("avgStress").textContent = average(recent, "stress");
+      }
+
+      function renderChart() {
+        const data = getData().slice(-7);
+        const bars = $("bars");
+        bars.innerHTML = "";
+
+        $("chartEmpty").classList.toggle("hidden", data.length > 0);
+        $("chartBox").classList.toggle("hidden", data.length === 0);
+
+        data.forEach(entry => {
+          const day = document.createElement("div");
+          day.className = "day-bar";
+
+          const parts = document.createElement("div");
+          parts.className = "bar-parts";
+
+          [
+            ["digest", entry.digestion],
+            ["energy", entry.energy],
+            ["stress", entry.stress]
+          ].forEach(([type, value]) => {
+            const bar = document.createElement("div");
+            bar.className = `bar ${type}`;
+            bar.style.height = `${Math.max(2, Number(value) * 18)}px`;
+            bar.title = `${type} : ${value}/10`;
+            parts.appendChild(bar);
+          });
+
+          const label = document.createElement("span");
+          label.className = "day-label";
+          const [, month, date] = entry.date.split("-");
+          label.textContent = `${date}/${month}`;
+
+          day.append(parts, label);
+          bars.appendChild(day);
+        });
+      }
+
+      function renderHistory() {
+        const container = $("entries");
+        const data = getData().slice().reverse();
+        container.innerHTML = "";
+
+        if (!data.length) {
+          container.innerHTML =
+            '<div class="empty">Aucune journée enregistrée.</div>';
+          return;
+        }
+
+        data.forEach(entry => {
+          const article = document.createElement("article");
+          article.className = "entry";
+
+          const head = document.createElement("div");
+          head.className = "entry-head";
+
+          const title = document.createElement("strong");
+          title.textContent = formatDate(entry.date);
+
+          const pill = document.createElement("span");
+          pill.className = "pill";
+          pill.textContent = `Énergie ${entry.energy}/10`;
+
+          head.append(title, pill);
+
+          const summary = document.createElement("p");
+          summary.textContent =
+            `Digestion ${entry.digestion}/10 · Ballonnements ${entry.bloating}/10 · ` +
+            `Stress ${entry.stress}/10 · Envies ${entry.cravings}/10`;
+
+          if (entry.meals) {
+            const meals = document.createElement("p");
+            meals.textContent = `Repas : ${entry.meals}`;
+            article.append(head, summary, meals);
+          } else {
+            article.append(head, summary);
+          }
+
+          if (entry.notes) {
+            const notes = document.createElement("p");
+            notes.textContent = `Notes : ${entry.notes}`;
+            article.appendChild(notes);
+          }
+
+          const actions = document.createElement("div");
+          actions.className = "actions";
+
+          const edit = document.createElement("button");
+          edit.type = "button";
+          edit.className = "btn secondary";
+          edit.textContent = "Modifier";
+          edit.onclick = () => {
+            loadDay(entry.date);
+            document.querySelector('[data-page="journal"]').click();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          };
+
+          const remove = document.createElement("button");
+          remove.type = "button";
+          remove.className = "btn danger";
+          remove.textContent = "Supprimer";
+          remove.onclick = () => {
+            if (!confirm(`Supprimer l’entrée du ${formatDate(entry.date)} ?`)) return;
+            saveData(getData().filter(item => item.date !== entry.date));
+            render();
+          };
+
+          actions.append(edit, remove);
+          article.appendChild(actions);
+          container.appendChild(article);
+        });
+      }
+
+      function download(content, filename, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      $("json").addEventListener("click", () => {
+        download(
+          JSON.stringify(getData(), null, 2),
+          `sauvegarde-suivi-${today()}.json`,
+          "application/json"
+        );
+      });
+
+      $("csv").addEventListener("click", () => {
+        const data = getData();
+
+        if (!data.length) {
+          alert("Aucune donnée à exporter.");
+          return;
+        }
+
+        const fields = [
+          "date", "sleep", "digestion", "bloating", "energy",
+          "cravings", "stress", "hunger", "breakfast", "regularMeals",
+          "protein", "vegetables", "water", "movement", "slowMeal",
+          "selfCare", "meals", "notes"
+        ];
+
+        const cell = value =>
+          `"${String(value ?? "").replaceAll('"', '""')}"`;
+
+        const rows = [
+          fields.map(cell).join(";"),
+          ...data.map(entry =>
+            fields.map(field => cell(entry[field])).join(";")
+          )
+        ];
+
+        download(
+          "\uFEFF" + rows.join("\n"),
+          `suivi-alimentation-${today()}.csv`,
+          "text/csv;charset=utf-8"
+        );
+      });
+
+      $("import").addEventListener("change", async event => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+          const data = JSON.parse(await file.text());
+
+          if (!Array.isArray(data) ||
+              data.some(item => !item || typeof item.date !== "string")) {
+            throw new Error();
+          }
+
+          if (confirm("Remplacer les données actuelles par cette sauvegarde ?")) {
+            data.sort((a, b) => a.date.localeCompare(b.date));
+            saveData(data);
+            loadDay($("date").value);
+            render();
+            alert("Sauvegarde importée.");
+          }
+        } catch {
+          alert("Le fichier sélectionné n’est pas une sauvegarde valide.");
+        }
+
+        event.target.value = "";
+      });
+
+      $("deleteAll").addEventListener("click", () => {
+        const answer = prompt(
+          "Pour effacer définitivement toutes les données, écris SUPPRIMER"
+        );
+
+        if (answer !== "SUPPRIMER") return;
+
+        localStorage.removeItem(KEY);
+        resetForm(false);
+        render();
+        alert("Toutes les données ont été supprimées.");
+      });
+
+      function render() {
+        renderStats();
+        renderChart();
+        renderHistory();
+      }
+
+      $("date").value = today();
+      updateOutputs();
+      loadDay(today());
+      render();
+    })();
+  </script>
+</body>
+</html>
